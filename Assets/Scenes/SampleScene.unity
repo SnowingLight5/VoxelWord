@@ -325,6 +325,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04e053242f0bbea6fb15e2a2b94081d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 123456789
+  biome: {fileID: 11400000, guid: 2cb1b20d3522afb8bbba0fad435a8edf, type: 2}
   player: {fileID: 963194228}
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: 2a2851b689fcee8f69767ab4e985f897, type: 2}
@@ -369,6 +371,30 @@ MonoBehaviour:
     bottomFaceTexture: 3
     leftFaceTexture: 1
     rightFaceTexture: 1
+  - name: CobbleStone
+    isSolid: 1
+    frontFaceTexture: 4
+    backFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
+  - name: Sand
+    isSolid: 1
+    frontFaceTexture: 6
+    backFaceTexture: 6
+    topFaceTexture: 6
+    bottomFaceTexture: 6
+    leftFaceTexture: 6
+    rightFaceTexture: 6
+  - name: Dirt
+    isSolid: 1
+    frontFaceTexture: 13
+    backFaceTexture: 13
+    topFaceTexture: 13
+    bottomFaceTexture: 13
+    leftFaceTexture: 13
+    rightFaceTexture: 13
 --- !u!4 &1612571306
 Transform:
   m_ObjectHideFlags: 0

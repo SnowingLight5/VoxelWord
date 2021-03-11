@@ -35,6 +35,7 @@ public class Chunk {
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+
         meshRenderer.material = world.material;
         chunkObject.transform.SetParent(world.transform);
         chunkObject.transform.position = new Vector3(coord.x * VoxelData.chunkWidth, 0f, coord.z * VoxelData.chunkWidth);
@@ -59,7 +60,10 @@ public class Chunk {
         for(int y = 0; y < VoxelData.chunkHeight; y++){
             for(int x = 0; x < VoxelData.chunkWidth; x++){
                 for(int z = 0; z < VoxelData.chunkWidth; z++){
-                    AddVoxelDataToChunk(new Vector3(x,y,z));
+
+                    if(world.blockTypes[voxelMap[x,y,z]].isSolid){
+                        AddVoxelDataToChunk(new Vector3(x,y,z));
+                    }
                 }
             }
         }
