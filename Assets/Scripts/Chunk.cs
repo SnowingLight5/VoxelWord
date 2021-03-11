@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chunk : MonoBehaviour
-{
+public class Chunk {
 
-    public MeshRenderer meshRenderer;
-    public MeshFilter meshFilter;
+    public ChunkCoord coord;
+
+    GameObject chunkObject;
+    MeshRenderer meshRenderer;
+    MeshFilter meshFilter;
 
     World world;
 
@@ -17,29 +19,37 @@ public class Chunk : MonoBehaviour
 
     byte[,,] voxelMap = new byte[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
-    void Start()
-    {
+    public bool isActive{
+        get { return chunkObject.activeSelf; }
+        set { chunkObject.SetActive(value); }
+    }
 
-        world = GameObject.Find("World").GetComponent<World>();
+    public Vector3 position{
+        get { return chunkObject.transform.position; }
+    }
+
+    public Chunk(ChunkCoord chunkCoord, World world){
+        coord = chunkCoord;
+        this.world = world;
+
+        chunkObject = new GameObject();
+        meshFilter = chunkObject.AddComponent<MeshFilter>();
+        meshRenderer = chunkObject.AddComponent<MeshRenderer>();
+        meshRenderer.material = world.material;
+        chunkObject.transform.SetParent(world.transform);
+        chunkObject.transform.position = new Vector3(coord.x * VoxelData.chunkWidth, 0f, coord.z * VoxelData.chunkWidth);
+        chunkObject.name = "Chunk: " + coord.x + ", " + coord.z;
 
         PopulateVoxelMap();
-        
         CreateMeshData();
-
-        CreateMesh();        
+        CreateMesh();
     }
 
     void PopulateVoxelMap(){
         for(int y = 0; y < VoxelData.chunkHeight; y++){
             for(int x = 0; x < VoxelData.chunkWidth; x++){
                 for(int z = 0; z < VoxelData.chunkWidth; z++){
-                    if(y < 1){
-                        voxelMap[x,y,z] = 0;
-                    }else if(y == VoxelData.chunkHeight - 1){
-                        voxelMap[x,y,z] = 3;
-                    }else{
-                        voxelMap[x,y,z] = 1;
-                    }
+                    voxelMap[x,y,z] = world.GetVoxel(new Vector3(x,y,z) + position);
                 }
             }
         }
@@ -55,16 +65,24 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    bool CheckVoxel(Vector3 position){
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
-        int z = Mathf.FloorToInt(position.z);
+    bool CheckVoxel(Vector3 pos){
+        int x = Mathf.FloorToInt(pos.x);
+        int y = Mathf.FloorToInt(pos.y);
+        int z = Mathf.FloorToInt(pos.z);
 
-        if(x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1){
-            return false;
+        if(!isVoxelInChunk(x, y, z)){
+            return world.blockTypes[world.GetVoxel(pos + position)].isSolid;
         }
 
         return world.blockTypes[voxelMap[x,y,z]].isSolid;
+    }
+
+    bool isVoxelInChunk(int x, int y, int z){
+        if(x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1){
+            return false;
+        } else{
+            return true;
+        }
     }
 
     void AddVoxelDataToChunk(Vector3 position) {
@@ -113,13 +131,10 @@ public class Chunk : MonoBehaviour
         x *= VoxelData.normalizedBlockTextureSize;
         y *= VoxelData.normalizedBlockTextureSize;
 
-        Debug.Log(x +" - "+y);
-
         uvs.Add(new Vector2(x, y));
         uvs.Add(new Vector2(x, y + VoxelData.normalizedBlockTextureSize));
         uvs.Add(new Vector2(x + VoxelData.normalizedBlockTextureSize, y));
         uvs.Add(new Vector2(x + VoxelData.normalizedBlockTextureSize, y + VoxelData.normalizedBlockTextureSize));
-
 
     }
 }
