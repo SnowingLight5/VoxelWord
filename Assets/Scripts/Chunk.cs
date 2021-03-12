@@ -19,19 +19,35 @@ public class Chunk {
 
     public byte[,,] voxelMap = new byte[VoxelData.chunkWidth, VoxelData.chunkHeight, VoxelData.chunkWidth];
 
+    public bool isVoxelMapPopulated = false;
+    private bool active;
     public bool isActive{
-        get { return chunkObject.activeSelf; }
-        set { chunkObject.SetActive(value); }
+        get { return active; }
+        set { 
+                active = value;
+                if(chunkObject != null) {
+                    chunkObject.SetActive(value);
+                } 
+            }
     }
 
     public Vector3 position{
         get { return chunkObject.transform.position; }
     }
 
-    public Chunk(ChunkCoord chunkCoord, World world){
+
+    public Chunk(ChunkCoord chunkCoord, World world, bool generateOnLoad){
         coord = chunkCoord;
         this.world = world;
+        isActive = true;
 
+        if(generateOnLoad){
+            Init();
+        }
+       
+    }
+
+    public void Init(){
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
@@ -54,6 +70,7 @@ public class Chunk {
                 }
             }
         }
+        isVoxelMapPopulated = true;
     }
 
     void CreateMeshData(){
@@ -75,10 +92,22 @@ public class Chunk {
         int z = Mathf.FloorToInt(pos.z);
 
         if(!isVoxelInChunk(x, y, z)){
-            return world.blockTypes[world.GetVoxel(pos + position)].isSolid;
+            return world.CheckForVoxel(pos + position);
         }
 
         return world.blockTypes[voxelMap[x,y,z]].isSolid;
+    }
+
+    public byte GetVoxelFromGlobalVector3(Vector3 pos){
+        int xCheck = Mathf.FloorToInt(pos.x);
+        int yCheck = Mathf.FloorToInt(pos.y);
+        int zCheck = Mathf.FloorToInt(pos.z);
+
+        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
+        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+
+        return voxelMap[xCheck, yCheck, zCheck];
+        
     }
 
     bool isVoxelInChunk(int x, int y, int z){

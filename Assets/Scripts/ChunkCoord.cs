@@ -12,6 +12,19 @@ public class ChunkCoord
         this.z = z;
     }
 
+    public ChunkCoord() {
+        this.x = 0;
+        this.z = 0;
+    }
+
+    public ChunkCoord(Vector3 pos){
+        int xCheck = Mathf.FloorToInt(pos.x);
+        int zCheck = Mathf.FloorToInt(pos.z);
+
+        this.x = xCheck / VoxelData.chunkWidth;
+        this.z = zCheck / VoxelData.chunkWidth;
+    }
+
     public bool Equals(ChunkCoord other){
         if(other == null){
             return false;
