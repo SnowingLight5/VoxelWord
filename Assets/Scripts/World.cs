@@ -88,8 +88,22 @@ public class World : MonoBehaviour
         }
     }
 
-    public byte GetVoxel(Vector3 position){
+    public bool CheckForVoxel(float x, float y, float z){
 
+        int xCheck = Mathf.FloorToInt(x);
+        int yCheck = Mathf.FloorToInt(y);
+        int zCheck = Mathf.FloorToInt(z);
+
+        int xChunk = xCheck / VoxelData.chunkWidth;
+        int zChunk = zCheck / VoxelData.chunkWidth;
+
+        xCheck -= (xChunk * VoxelData.chunkWidth);
+        zCheck -= (zChunk * VoxelData.chunkWidth);
+
+        return blockTypes[chunks[xChunk, zChunk].voxelMap[xCheck, yCheck, zCheck]].isSolid;
+    }
+
+    public byte GetVoxel(Vector3 position){
 
         int yPos = Mathf.FloorToInt(position.y);
 
