@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     public bool isGrounded;
     public bool isSprinting;
 
+    public float mouseSensibility = 10f;
     public float walkSpeed = 3f;
     public float sprintSpeed = 6f;
     public float jumpForce = 5f;
@@ -32,7 +33,6 @@ public class Player : MonoBehaviour
     public float checkIncrement = 0.1f;
     public float reach = 8f;
 
-    public Text selectedBlockText;
     public byte selectedBlockIndex = 1;
 
 
@@ -41,7 +41,6 @@ public class Player : MonoBehaviour
         world = GameObject.Find("World").GetComponent<World>();
 
         Cursor.lockState = CursorLockMode.Locked;
-        selectedBlockText.text = world.blockTypes[selectedBlockIndex].name + " block selected";
 
     }
 
@@ -52,8 +51,8 @@ public class Player : MonoBehaviour
             Jump();
         }
 
-        transform.Rotate(Vector3.up * mouseHorizontal);
-        cam.Rotate(Vector3.right * -mouseVertical);
+        transform.Rotate(Vector3.up * mouseHorizontal * mouseSensibility);
+        cam.Rotate(Vector3.right * -mouseVertical  * mouseSensibility);
 
         transform.Translate(velocity, Space.World);
     }
@@ -116,31 +115,6 @@ public class Player : MonoBehaviour
 
         if(isGrounded && Input.GetButtonDown("Jump")){
             jumpRequest = true;
-        }
-
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-
-        if (scroll != 0)
-        {
-            if (scroll > 0)
-            {
-                selectedBlockIndex++;
-            }
-            else if (scroll < 0)
-            {
-                selectedBlockIndex--;
-            }
-
-            if(selectedBlockIndex > (byte)(world.blockTypes.Length - 1))
-            {
-                selectedBlockIndex = 1;
-            }
-            if (selectedBlockIndex < 1)
-            {
-                selectedBlockIndex = (byte)(world.blockTypes.Length - 1);
-            }
-
-            selectedBlockText.text = world.blockTypes[selectedBlockIndex].name + " block selected";
         }
 
         if (highlightBlock.gameObject.activeSelf)
