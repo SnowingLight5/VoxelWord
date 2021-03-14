@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public bool isGrounded;
     public bool isSprinting;
 
-    public float mouseSensibility = 10f;
+    public float mouseSensibility = 1f;
     public float walkSpeed = 3f;
     public float sprintSpeed = 6f;
     public float jumpForce = 5f;
@@ -51,15 +51,16 @@ public class Player : MonoBehaviour
             Jump();
         }
 
-        transform.Rotate(Vector3.up * mouseHorizontal * mouseSensibility);
-        cam.Rotate(Vector3.right * -mouseVertical  * mouseSensibility);
-
         transform.Translate(velocity, Space.World);
     }
 
     private void Update() {
         GetPlayerInputs();
         PlaceCursorBlocks();
+
+
+        transform.Rotate(Vector3.up * mouseHorizontal);
+        cam.Rotate(Vector3.right * -mouseVertical);
     }
 
     void Jump(){
@@ -84,11 +85,11 @@ public class Player : MonoBehaviour
 
         velocity += Vector3.up * verticalMomentum * Time.fixedDeltaTime;
         
-        if(velocity.z > 0 && front || velocity.z < 0 && back){
+        if((velocity.z > 0 && front) || (velocity.z < 0 && back)){
             velocity.z = 0;
         }
 
-        if(velocity.x > 0 && right || velocity.x < 0 && left){
+        if((velocity.x > 0 && right) || (velocity.x < 0 && left)){
             velocity.x = 0;
         }
 

@@ -23,6 +23,9 @@ public class Toolbar : MonoBehaviour
             itemSlot.icon.sprite = world.blockTypes[itemSlot.itemId].icon;
             itemSlot.icon.enabled = true;
         }
+
+        player.selectedBlockIndex = itemSlots[slotIndex].itemId;
+
     }
 
     // Update is called once per frame

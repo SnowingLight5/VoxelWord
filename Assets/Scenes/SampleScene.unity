@@ -1937,9 +1937,11 @@ MonoBehaviour:
   player: {fileID: 606040290}
   spawnPosition: {x: 0, y: 0, z: 0}
   material: {fileID: 2100000, guid: 2a2851b689fcee8f69767ab4e985f897, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: e9904601ddf7996408015277bcdc2854, type: 2}
   blockTypes:
   - name: Air
     isSolid: 0
+    isTransparent: 1
     icon: {fileID: 0}
     frontFaceTexture: 0
     backFaceTexture: 0
@@ -1949,42 +1951,87 @@ MonoBehaviour:
     rightFaceTexture: 0
   - name: Bedrock
     isSolid: 1
-    icon: {fileID: -4219558403781695398, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 5
-    backFaceTexture: 5
-    topFaceTexture: 5
-    bottomFaceTexture: 5
-    leftFaceTexture: 5
-    rightFaceTexture: 5
+    isTransparent: 0
+    icon: {fileID: 6181873364862223445, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 9
+    backFaceTexture: 9
+    topFaceTexture: 9
+    bottomFaceTexture: 9
+    leftFaceTexture: 9
+    rightFaceTexture: 9
   - name: Stone
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 5679390536090785944, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 12
-    backFaceTexture: 12
-    topFaceTexture: 12
-    bottomFaceTexture: 12
-    leftFaceTexture: 12
-    rightFaceTexture: 12
+    frontFaceTexture: 0
+    backFaceTexture: 0
+    topFaceTexture: 0
+    bottomFaceTexture: 0
+    leftFaceTexture: 0
+    rightFaceTexture: 0
   - name: Grass
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 5392753449730437660, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 14
-    backFaceTexture: 14
-    topFaceTexture: 11
-    bottomFaceTexture: 13
-    leftFaceTexture: 14
-    rightFaceTexture: 14
+    frontFaceTexture: 2
+    backFaceTexture: 2
+    topFaceTexture: 7
+    bottomFaceTexture: 1
+    leftFaceTexture: 2
+    rightFaceTexture: 2
   - name: Furnace
     isSolid: 1
+    isTransparent: 0
     icon: {fileID: 0}
-    frontFaceTexture: 0
-    backFaceTexture: 1
-    topFaceTexture: 3
-    bottomFaceTexture: 3
-    leftFaceTexture: 1
-    rightFaceTexture: 1
+    frontFaceTexture: 12
+    backFaceTexture: 13
+    topFaceTexture: 15
+    bottomFaceTexture: 15
+    leftFaceTexture: 13
+    rightFaceTexture: 13
   - name: CobbleStone
     isSolid: 1
+    isTransparent: 0
+    icon: {fileID: 5581362664916931183, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 8
+    backFaceTexture: 8
+    topFaceTexture: 8
+    bottomFaceTexture: 8
+    leftFaceTexture: 8
+    rightFaceTexture: 8
+  - name: Sand
+    isSolid: 1
+    isTransparent: 0
+    icon: {fileID: -9138616440249935319, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 10
+    backFaceTexture: 10
+    topFaceTexture: 10
+    bottomFaceTexture: 10
+    leftFaceTexture: 10
+    rightFaceTexture: 10
+  - name: Dirt
+    isSolid: 1
+    isTransparent: 0
+    icon: {fileID: -6943373833598557, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 1
+    backFaceTexture: 1
+    topFaceTexture: 1
+    bottomFaceTexture: 1
+    leftFaceTexture: 1
+    rightFaceTexture: 1
+  - name: Log
+    isSolid: 1
+    isTransparent: 0
+    icon: {fileID: 448961105294916356, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 5
+    backFaceTexture: 5
+    topFaceTexture: 6
+    bottomFaceTexture: 6
+    leftFaceTexture: 5
+    rightFaceTexture: 5
+  - name: Plank
+    isSolid: 1
+    isTransparent: 0
     icon: {fileID: -1501523072523359806, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
     frontFaceTexture: 4
     backFaceTexture: 4
@@ -1992,51 +2039,36 @@ MonoBehaviour:
     bottomFaceTexture: 4
     leftFaceTexture: 4
     rightFaceTexture: 4
-  - name: Sand
-    isSolid: 1
-    icon: {fileID: 6181873364862223445, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 6
-    backFaceTexture: 6
-    topFaceTexture: 6
-    bottomFaceTexture: 6
-    leftFaceTexture: 6
-    rightFaceTexture: 6
-  - name: Dirt
-    isSolid: 1
-    icon: {fileID: -6943373833598557, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 13
-    backFaceTexture: 13
-    topFaceTexture: 13
-    bottomFaceTexture: 13
-    leftFaceTexture: 13
-    rightFaceTexture: 13
-  - name: Log
-    isSolid: 1
-    icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 9
-    backFaceTexture: 9
-    topFaceTexture: 10
-    bottomFaceTexture: 10
-    leftFaceTexture: 9
-    rightFaceTexture: 9
-  - name: Plank
-    isSolid: 1
-    icon: {fileID: -9138616440249935319, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 8
-    backFaceTexture: 8
-    topFaceTexture: 8
-    bottomFaceTexture: 8
-    leftFaceTexture: 8
-    rightFaceTexture: 8
   - name: Brick
     isSolid: 1
-    icon: {fileID: 448961105294916356, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 7
-    backFaceTexture: 7
-    topFaceTexture: 7
-    bottomFaceTexture: 7
-    leftFaceTexture: 7
-    rightFaceTexture: 7
+    isTransparent: 0
+    icon: {fileID: -4219558403781695398, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 11
+    backFaceTexture: 11
+    topFaceTexture: 11
+    bottomFaceTexture: 11
+    leftFaceTexture: 11
+    rightFaceTexture: 11
+  - name: Glass
+    isSolid: 1
+    isTransparent: 1
+    icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 3
+    backFaceTexture: 3
+    topFaceTexture: 3
+    bottomFaceTexture: 3
+    leftFaceTexture: 3
+    rightFaceTexture: 3
+  - name: Leaves
+    isSolid: 1
+    isTransparent: 1
+    icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    frontFaceTexture: 16
+    backFaceTexture: 16
+    topFaceTexture: 16
+    bottomFaceTexture: 16
+    leftFaceTexture: 16
+    rightFaceTexture: 16
   debugScreen: {fileID: 1610855822}
 --- !u!4 &1612571306
 Transform:
@@ -2278,7 +2310,7 @@ MonoBehaviour:
   world: {fileID: 1612571305}
   player: {fileID: 606040289}
   itemSlots:
-  - itemId: 1
+  - itemId: 11
     icon: {fileID: 78149226}
     backgroundIcon: {fileID: 183983170}
   - itemId: 2

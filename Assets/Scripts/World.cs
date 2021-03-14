@@ -12,6 +12,7 @@ public class World : MonoBehaviour
     public Vector3 spawnPosition;
 
     public Material material;
+    public Material transparentMaterial;
     public BlockType[] blockTypes;
 
     Chunk[,] chunks = new Chunk[VoxelData.worldSizeInChunks, VoxelData.worldSizeInChunks];
@@ -21,7 +22,11 @@ public class World : MonoBehaviour
     ChunkCoord playerLastChunkCoord;
 
     List<ChunkCoord> chunksToCreate = new List<ChunkCoord>();
-    private bool isCreatingChunks;
+    List<Chunk> chunksToUpdate = new List<Chunk>();
+
+    private bool applyingModifications = false;
+
+    Queue<VoxelMod> modifications = new Queue<VoxelMod>();
 
     public GameObject debugScreen;
 
@@ -44,8 +49,19 @@ public class World : MonoBehaviour
             playerLastChunkCoord = playerChunkCoord;
         }
 
-        if(chunksToCreate.Count > 0 && !isCreatingChunks){
-            StartCoroutine("CreateChunks");
+        if(modifications.Count > 0 && !applyingModifications)
+        {
+            StartCoroutine(ApplyModifications());
+        }
+
+        if(chunksToCreate.Count > 0)
+        {
+            CreateChunk();
+        }
+
+        if(chunksToUpdate.Count > 0)
+        {
+            UpdateChunks();
         }
 
         if(Input.GetKeyDown(KeyCode.F3)){
@@ -63,19 +79,95 @@ public class World : MonoBehaviour
             }
         }
 
+        while(modifications.Count > 0)
+        {
+            VoxelMod v = modifications.Dequeue();
+            ChunkCoord c = GetChunkCoordFromVector3(v.position);
+
+            if (chunks[c.x, c.z] == null)
+            {
+                chunks[c.x, c.z] = new Chunk(c, this, true);
+                activeChunks.Add(c);
+            }
+
+            chunks[c.x, c.z].modifications.Enqueue(v);
+
+            if(!chunksToUpdate.Contains(chunks[c.x, c.z]))
+            {
+                chunksToUpdate.Add(chunks[c.x, c.z]);
+            }
+        }
+
+        for(int i = 0; i < chunksToUpdate.Count; i++)
+        {
+            chunksToUpdate[0].UpdateChunk();
+            chunksToUpdate.RemoveAt(0);
+        }
+
         player.position = spawnPosition;
     }
 
-    IEnumerator CreateChunks() {
-        isCreatingChunks = true;
+    void CreateChunk()
+    {
+        ChunkCoord c = chunksToCreate[0];
+        chunksToCreate.RemoveAt(0);
+        activeChunks.Add(c);
+        chunks[c.x, c.z].Init();
+    }
 
-        while(chunksToCreate.Count > 0){
-            chunks[chunksToCreate[0].x, chunksToCreate[0].z].Init();
-            chunksToCreate.RemoveAt(0);
-            yield return null;
+    void UpdateChunks()
+    {
+        bool updated = false;
+        int index = 0;
+
+        while (!updated && index < chunksToUpdate.Count - 1)
+        {
+            if (chunksToUpdate[index].isVoxelMapPopulated)
+            {
+                chunksToUpdate[index].UpdateChunk();
+                chunksToUpdate.RemoveAt(0);
+                updated = true;
+            }
+            else
+            {
+                index++;
+            }
+        }
+    }
+
+    IEnumerator ApplyModifications()
+    {
+        applyingModifications = true;
+        int count = 0;
+
+        while(modifications.Count > 0)
+        {
+            VoxelMod v = modifications.Dequeue();
+
+            ChunkCoord c = GetChunkCoordFromVector3(v.position);
+
+            if (chunks[c.x, c.z] == null)
+            {
+                chunks[c.x, c.z] = new Chunk(c, this, true);
+                activeChunks.Add(c);
+            }
+
+            chunks[c.x, c.z].modifications.Enqueue(v);
+
+            if (!chunksToUpdate.Contains(chunks[c.x, c.z]))
+            {
+                chunksToUpdate.Add(chunks[c.x, c.z]);
+            }
+
+            count++;
+            if(count > 200)
+            {
+                count = 0;
+                yield return null;
+            }
         }
 
-        isCreatingChunks = false;
+        applyingModifications = false;
     }
 
     public ChunkCoord GetChunkCoordFromVector3(Vector3 pos){
@@ -152,6 +244,26 @@ public class World : MonoBehaviour
         
     }
 
+    public bool CheckIfVoxelIsTransparent(Vector3 pos)
+    {
+
+        ChunkCoord chunkCoord = new ChunkCoord(pos);
+
+        if (!IsChunkInWorld(chunkCoord) || pos.y < 0 || pos.y > VoxelData.chunkHeight)
+        {
+            return false;
+        }
+
+        if (chunks[chunkCoord.x, chunkCoord.z] != null && chunks[chunkCoord.x, chunkCoord.z].isVoxelMapPopulated)
+        {
+            return blockTypes[chunks[chunkCoord.x, chunkCoord.z].GetVoxelFromGlobalVector3(pos)].isTransparent;
+        }
+
+        return blockTypes[GetVoxel(pos)].isTransparent;
+
+
+    }
+
     public byte GetVoxel(Vector3 position){
 
         int yPos = Mathf.FloorToInt(position.y);
@@ -192,6 +304,18 @@ public class World : MonoBehaviour
             }
         }
 
+        /* TREE PASS*/
+
+        if(yPos == terrainHeight)
+        {
+            if(Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.treeZoneScale) > biome.treeZoneThreshold)
+            {
+                if(Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.treePlacementScale) > biome.treePlacementThreshold){
+                    Structure.MakeTree(position, modifications, biome.minTreeHeight, biome.maxTreeHeight);
+                }
+            }
+        }
+
         return voxelValue;
     }
 
@@ -218,6 +342,7 @@ public class BlockType {
 
     public string name;
     public bool isSolid;
+    public bool isTransparent;
     public Sprite icon;
 
     [Header("Texture")]
