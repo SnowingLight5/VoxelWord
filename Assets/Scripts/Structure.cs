@@ -4,34 +4,55 @@ using UnityEngine;
 
 public static class Structure {
     
-    public static void MakeTree(Vector3 position, Queue<VoxelMod> queue, int minTrunkHeight, int maxTrunkHeight)
+    public static Queue<VoxelMod> MakeTree(Vector3 groundPosition, int minTrunkHeight, int maxTrunkHeight)
     {
+
+        Vector3 position = new Vector3(groundPosition.x, groundPosition.y + 1, groundPosition.z);
+
+        Queue<VoxelMod> queue = new Queue<VoxelMod>();
+
         int height = (int)(maxTrunkHeight * Noise.Get2DPerlin(new Vector2(position.x, position.z), 250f, 3f));
         if(height < minTrunkHeight)
         {
             height = minTrunkHeight;
         }
 
-        for(int i = 1; i <= height; i++)
+        for(int i = 0; i < height; i++)
         {
             queue.Enqueue(new VoxelMod(new Vector3(position.x, position.y + i, position.z), 8));
         }
 
 
-        for(int x = - 2; x < 3; x++)
+        for(int x = -2; x < 3; x++)
         {
-            for (int y = -1; y < 2; y++)
+            for (int y = -3; y < 1; y++)
             {
                 for (int z = -2; z < 3; z++)
                 {
-                    if(x == 0 && z == 0 && y < 0)
-                    {
+                    if(y < 0 && x == 0 && z == 0){
                         continue;
                     }
+
+                    if(y < -1){
+                        if(Mathf.Abs(x) + Mathf.Abs(z) > 3){
+                            continue;
+                        }
+                    }else if(y == -1){
+                        if(Mathf.Abs(x) > 1 || Mathf.Abs(z) > 1){
+                            continue;
+                        }
+                    }else if (y == 0){
+                        if(Mathf.Abs(x) + Mathf.Abs(z) > 1){
+                            continue;
+                        }
+                    }
+
                     queue.Enqueue(new VoxelMod(new Vector3(position.x + x, position.y + height + y, position.z + z), 12));
                 }
             }
 
         }
+
+        return queue;
     }
 }

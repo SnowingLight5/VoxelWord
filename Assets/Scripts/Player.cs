@@ -30,11 +30,12 @@ public class Player : MonoBehaviour
 
     public Transform highlightBlock;
     public Transform placeBlock;
+    public GameObject debugScreen;
+
     public float checkIncrement = 0.1f;
     public float reach = 8f;
 
     public byte selectedBlockIndex = 1;
-
 
     private void Start() {
         cam = GameObject.Find("Main Camera").transform;
@@ -118,18 +119,22 @@ public class Player : MonoBehaviour
             jumpRequest = true;
         }
 
-        if (highlightBlock.gameObject.activeSelf)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                world.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
-            }
-
-            if (Input.GetMouseButtonDown(1))
-            {
-                world.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
-            }
+        if(Input.GetKeyDown(KeyCode.F3)){
+            debugScreen.SetActive(!debugScreen.activeSelf);
+            highlightBlock.gameObject.SetActive(!highlightBlock.gameObject.activeSelf);
+            placeBlock.gameObject.SetActive(!placeBlock.gameObject.activeSelf);
         }
+
+        
+        if (Input.GetMouseButtonDown(0) && highlightBlock.position.x != 0 && highlightBlock.position.y != 0 && highlightBlock.position.z != 0){
+            world.GetChunkFromVector3(highlightBlock.position).EditVoxel(highlightBlock.position, 0);
+        }
+
+        if (Input.GetMouseButtonDown(1) && placeBlock.position.x != 0 && placeBlock.position.y != 0 && placeBlock.position.z != 0)
+        {
+            world.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
+        }
+        
 
     }
 
@@ -147,9 +152,6 @@ public class Player : MonoBehaviour
                 highlightBlock.position = new Vector3(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
                 placeBlock.position = lastPos;
 
-                highlightBlock.gameObject.SetActive(true);
-                placeBlock.gameObject.SetActive(true);
-
                 return;
             }
             else
@@ -159,9 +161,8 @@ public class Player : MonoBehaviour
             }
         }
 
-        highlightBlock.gameObject.SetActive(false);
-        placeBlock.gameObject.SetActive(false);
-
+        highlightBlock.position = new Vector3(0, 0, 0);
+        placeBlock.position = new Vector3(0, 0, 0);
 
     }
 

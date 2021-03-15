@@ -20,8 +20,8 @@ MonoBehaviour:
   treeZoneThreshold: 0.6
   treePlacementScale: 15
   treePlacementThreshold: 0.8
-  maxTreeHeight: 6
-  minTreeHeight: 3
+  maxTreeHeight: 5
+  minTreeHeight: 5
   lodes:
   - nodeName: Dirt
     blockId: 7
