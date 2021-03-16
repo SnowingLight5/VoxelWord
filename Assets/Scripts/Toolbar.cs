@@ -1,70 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Toolbar : MonoBehaviour
 {
+    
+    public UIItemSlot[] slots;
+    public int slotIndex = 0;
 
-    public World world;
     public Player player;
+    public Sprite selectedBackground;
+    public Sprite unselectedBackground;
 
-    public ItemSlot[] itemSlots;
+    private void Start(){
 
-    public Sprite backgroundImage;
-    public Sprite highlightBackgroundImage;
+        byte index = 1;
 
-    int slotIndex = 0;
-
-    void Start()
-    {
-        foreach (ItemSlot itemSlot in itemSlots)
-        {
-            itemSlot.icon.sprite = world.blockTypes[itemSlot.itemId].icon;
-            itemSlot.icon.enabled = true;
+        foreach(UIItemSlot s in slots){
+            ItemStack stack = new ItemStack(index, Random.Range(2, 65));
+            ItemSlot slot = new ItemSlot(s, stack);
+            index++;
         }
-
-        player.selectedBlockIndex = itemSlots[slotIndex].itemId;
-
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    private void Update(){
+
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if(scroll != 0)
-        {
-            itemSlots[slotIndex].backgroundIcon.sprite = backgroundImage;
+        if(scroll != 0){
 
-            if (scroll < 0)
-            {
-                slotIndex++;
-            }else
-            {
+            slots[slotIndex].slotImage.sprite = unselectedBackground;
+
+
+            if(scroll > 0){
                 slotIndex--;
+            } else {
+                slotIndex ++;
             }
 
-            if(slotIndex > itemSlots.Length - 1)
-            {
+            if(slotIndex > slots.Length - 1){
                 slotIndex = 0;
-            }
-            if(slotIndex < 0)
-            {
-                slotIndex = itemSlots.Length - 1;
+            } else if (slotIndex < 0){
+                slotIndex = slots.Length - 1;
             }
 
-            itemSlots[slotIndex].backgroundIcon.sprite = highlightBackgroundImage;
-            player.selectedBlockIndex = itemSlots[slotIndex].itemId;
+            slots[slotIndex].slotImage.sprite = selectedBackground;
         }
-    }
-}
 
-[System.Serializable]
-public class ItemSlot
-{
-    public byte itemId;
-    public Image icon;
-    public Image backgroundIcon;
+    }
 
 }

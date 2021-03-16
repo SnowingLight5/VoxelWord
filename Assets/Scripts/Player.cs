@@ -35,7 +35,8 @@ public class Player : MonoBehaviour
     public float checkIncrement = 0.1f;
     public float reach = 8f;
 
-    public byte selectedBlockIndex = 1;
+    public Toolbar toolbar;
+
 
     private void Start() {
         cam = GameObject.Find("Main Camera").transform;
@@ -47,6 +48,10 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate() {
 
+        if(world.inUi){
+            return;
+        }
+
         CalculateVelocity();
         if(jumpRequest){
             Jump();
@@ -56,6 +61,15 @@ public class Player : MonoBehaviour
     }
 
     private void Update() {
+
+        if (Input.GetKeyDown(KeyCode.I)){
+            world.inUi = !world.inUi;
+        }
+
+        if(world.inUi){
+            return;
+        }
+
         GetPlayerInputs();
         PlaceCursorBlocks();
 
@@ -132,7 +146,10 @@ public class Player : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1) && placeBlock.position.x != 0 && placeBlock.position.y != 0 && placeBlock.position.z != 0)
         {
-            world.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, selectedBlockIndex);
+            if(toolbar.slots[toolbar.slotIndex].hasItem){
+                world.GetChunkFromVector3(placeBlock.position).EditVoxel(placeBlock.position, toolbar.slots[toolbar.slotIndex].itemSlot.stack.id);
+                toolbar.slots[toolbar.slotIndex].itemSlot.Take(1);
+            }
         }
         
 

@@ -29,6 +29,15 @@ public class World : MonoBehaviour
 
     Queue<Queue<VoxelMod>> modifications = new Queue<Queue<VoxelMod>>();
 
+    public bool _inUi = false;
+
+    public bool inUi {
+        get { return _inUi;}
+        set { 
+            _inUi = value;
+        }
+    }
+
     private void Start() {
 
         Random.InitState(seed);
@@ -263,7 +272,7 @@ public class World : MonoBehaviour
         if(yPos == terrainHeight){
             voxelValue = 3;
         } else if (yPos < terrainHeight && yPos > terrainHeight - 4){
-            voxelValue = 7;
+            voxelValue = 6;
         } else if(yPos > terrainHeight){
             return 0;
         } else {
