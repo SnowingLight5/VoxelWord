@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading;
 
 public class Chunk {
 
@@ -28,7 +27,6 @@ public class Chunk {
     public Queue<VoxelMod> modifications = new Queue<VoxelMod>();
 
     private bool isVoxelMapPopulated = false;
-    private bool threadLocked = false;
     private bool active;
     public bool isActive{
         get { return active; }
@@ -42,7 +40,7 @@ public class Chunk {
 
     public bool isEditable {
         get { 
-            if(!isVoxelMapPopulated || threadLocked){
+            if(!isVoxelMapPopulated){
                 return false;
             } else{
                 return true;
@@ -50,15 +48,9 @@ public class Chunk {
         }
     }
 
-    public Chunk(ChunkCoord chunkCoord, World world, bool generateOnLoad){
+    public Chunk(ChunkCoord chunkCoord, World world){
         coord = chunkCoord;
         this.world = world;
-        isActive = true;
-
-        if(generateOnLoad){
-            Init();
-        }
-       
     }
 
     public void Init(){
@@ -76,12 +68,8 @@ public class Chunk {
 
         position = chunkObject.transform.position;
 
-        if(world.enableThreading){
-            Thread thread = new Thread(new ThreadStart(PopulateVoxelMap));
-            thread.Start();
-        } else {
-            PopulateVoxelMap();
-        }
+        PopulateVoxelMap();
+        
     }
 
     void PopulateVoxelMap(){
@@ -92,21 +80,14 @@ public class Chunk {
                 }
             }
         }
-        PrivateUpdateChunk();
         isVoxelMapPopulated = true;
-    }
 
-    public void UpdateChunk(){
-        if(world.enableThreading){
-            Thread thread = new Thread(new ThreadStart(PrivateUpdateChunk));
-            thread.Start();
-        } else {
-            PrivateUpdateChunk();
+        lock(world.chunkUpdateThreadLock){
+            world.chunksToUpdate.Add(this);
         }
     }
 
-    private void PrivateUpdateChunk(){
-        threadLocked = true;
+    public void UpdateChunk(){
 
         while(modifications.Count > 0)
         {
@@ -134,8 +115,6 @@ public class Chunk {
         lock(world.chunksToDraw) {
             world.chunksToDraw.Enqueue(this);
         }
-
-        threadLocked = false;
 
     }
 
@@ -242,10 +221,10 @@ public class Chunk {
 
         voxelMap[xCheck, yCheck, zCheck].id = newBlockId;
 
-        PrivateUpdateChunk();
-
-        UpdateSurroundingVoxels(xCheck, yCheck, zCheck);
-
+        lock(world.chunkUpdateThreadLock){
+            world.chunksToUpdate.Insert(0, this);
+            UpdateSurroundingVoxels(xCheck, yCheck, zCheck);
+        }
     }
 
     void UpdateSurroundingVoxels(int x, int y, int z)
@@ -258,8 +237,7 @@ public class Chunk {
 
             if (!IsVoxelInChunk((int)currentVoxel.x, (int)currentVoxel.y, (int)currentVoxel.z))
             {
-                Chunk chunkToUpdate = world.GetChunkFromVector3(currentVoxel + position);
-                chunkToUpdate.UpdateChunk();
+                world.chunksToUpdate.Insert(0, world.GetChunkFromVector3(currentVoxel + position));
             }
         }
     }
