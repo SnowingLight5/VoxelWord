@@ -1,4 +1,4 @@
-﻿Shader "Minecraft/Blocks" {
+﻿Shader "Minecraft/Transparent Blocks" {
     Properties {
         _MainTex ("Block Texture Atlas", 2D) = "white" {}
     }
@@ -7,7 +7,7 @@
         Tags { 
             "Queue" = "AlphaTest"
             "IgnoreProjector" = "TRUE"
-            "RenderType"="Transparent" }
+            "RenderType" = "Transparent" }
         LOD 100
         Lighting Off
 

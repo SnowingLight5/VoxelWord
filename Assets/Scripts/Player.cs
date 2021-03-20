@@ -42,8 +42,7 @@ public class Player : MonoBehaviour
         cam = GameObject.Find("Main Camera").transform;
         world = GameObject.Find("World").GetComponent<World>();
 
-        Cursor.lockState = CursorLockMode.Locked;
-
+        world.inUi = false;
     }
 
     private void FixedUpdate() {
@@ -74,8 +73,8 @@ public class Player : MonoBehaviour
         PlaceCursorBlocks();
 
 
-        transform.Rotate(Vector3.up * mouseHorizontal);
-        cam.Rotate(Vector3.right * -mouseVertical);
+        transform.Rotate(Vector3.up * mouseHorizontal * world.settings.mouseSensitivy);
+        cam.Rotate(Vector3.right * -mouseVertical * world.settings.mouseSensitivy);
     }
 
     void Jump(){
@@ -116,6 +115,11 @@ public class Player : MonoBehaviour
     }
 
     void GetPlayerInputs(){
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
 
         horizontal = Input.GetAxis("Horizontal");
         vertical = Input.GetAxis("Vertical");
