@@ -12,7 +12,7 @@ public static class VoxelData {
         get { return worldSizeInChunks * chunkWidth; }
     }
     
-    public static readonly int textureAtlasSizeInBlocks = 16;
+    public static readonly int textureAtlasSizeInBlocks = 20;
     public static float normalizedBlockTextureSize{
         get { return 1f / textureAtlasSizeInBlocks; }
     }
