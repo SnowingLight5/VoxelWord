@@ -415,6 +415,24 @@ public class World : MonoBehaviour
         return voxelValue;
     }
 
+    public int GetBiomeIndex(Vector3 position){
+        float strongestWeight = 0f;
+        int strongestbiomeIndex = 0;
+
+        for(int i =0; i < biomes.Length; i++)
+        {
+            float weight = Noise.Get2DPerlin(new Vector2(position.x, position.z), biomes[i].offset, biomes[i].scale);
+
+            if(weight > strongestWeight)
+            {
+                strongestWeight = weight;
+                strongestbiomeIndex = i;
+            }
+        }
+
+        return strongestbiomeIndex;
+    }
+
     bool IsChunkInWorld(ChunkCoord chunkCoord){
         if(chunkCoord.x >= 0 && chunkCoord.x < VoxelData.worldSizeInChunks && chunkCoord.z >= 0 && chunkCoord.z < VoxelData.worldSizeInChunks){
             return true;
@@ -441,6 +459,8 @@ public class BlockType {
     public bool renderNeighborFaces;
     public float transparency;
     public Sprite icon;
+
+    public bool toBeColorized;
 
     [Header("Texture")]
     public int frontFaceTexture;

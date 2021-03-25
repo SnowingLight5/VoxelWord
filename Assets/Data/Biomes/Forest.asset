@@ -24,6 +24,7 @@ MonoBehaviour:
   majorFloraThreshold: 0.384
   majorPlacementFloraScale: 12
   majorFloraPlacementThreshold: 0.755
+  majorFloraColor: {r: 0, g: 0.39215687, b: 0, a: 0}
   placeMajorFlora: 1
   maxMajorFloraHeight: 12
   minMajorFloraHeight: 6

@@ -282,7 +282,6 @@ public class Chunk {
                 colors.Add(new Color(0, 0, 0, lightLevel));
                 colors.Add(new Color(0, 0, 0, lightLevel));
 
-
                 if (world.blockTypes[blockId].renderNeighborFaces)
                 {
                     transparentTriangles.Add(vertexIndex);
@@ -323,6 +322,8 @@ public class Chunk {
     }
 
     void AddTexture(int textureId){
+        
+        textureId = textureId - 1;
 
         float y = textureId / VoxelData.textureAtlasSizeInBlocks;
         float x = textureId - (y * VoxelData.textureAtlasSizeInBlocks);

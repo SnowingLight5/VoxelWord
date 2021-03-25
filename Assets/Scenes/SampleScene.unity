@@ -1524,6 +1524,7 @@ MonoBehaviour:
     renderNeighborFaces: 1
     transparency: 1
     icon: {fileID: 0}
+    toBeColorized: 0
     frontFaceTexture: 0
     backFaceTexture: 0
     topFaceTexture: 0
@@ -1535,144 +1536,145 @@ MonoBehaviour:
     renderNeighborFaces: 0
     transparency: 0
     icon: {fileID: 6181873364862223445, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 9
-    backFaceTexture: 9
-    topFaceTexture: 9
-    bottomFaceTexture: 9
-    leftFaceTexture: 9
-    rightFaceTexture: 9
-  - name: Stone
-    isSolid: 1
-    renderNeighborFaces: 0
-    transparency: 0
-    icon: {fileID: 5679390536090785944, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 0
-    backFaceTexture: 0
-    topFaceTexture: 0
-    bottomFaceTexture: 0
-    leftFaceTexture: 0
-    rightFaceTexture: 0
-  - name: Grass
-    isSolid: 1
-    renderNeighborFaces: 0
-    transparency: 0
-    icon: {fileID: 5392753449730437660, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 2
-    backFaceTexture: 2
-    topFaceTexture: 7
-    bottomFaceTexture: 1
-    leftFaceTexture: 2
-    rightFaceTexture: 2
-  - name: CobbleStone
-    isSolid: 1
-    renderNeighborFaces: 0
-    transparency: 0
-    icon: {fileID: 5581362664916931183, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 8
-    backFaceTexture: 8
-    topFaceTexture: 8
-    bottomFaceTexture: 8
-    leftFaceTexture: 8
-    rightFaceTexture: 8
-  - name: Sand
-    isSolid: 1
-    renderNeighborFaces: 0
-    transparency: 0
-    icon: {fileID: -9138616440249935319, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
     frontFaceTexture: 10
     backFaceTexture: 10
     topFaceTexture: 10
     bottomFaceTexture: 10
     leftFaceTexture: 10
     rightFaceTexture: 10
-  - name: Dirt
+  - name: Stone
     isSolid: 1
     renderNeighborFaces: 0
     transparency: 0
-    icon: {fileID: -6943373833598557, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    icon: {fileID: 5679390536090785944, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
     frontFaceTexture: 1
     backFaceTexture: 1
     topFaceTexture: 1
     bottomFaceTexture: 1
     leftFaceTexture: 1
     rightFaceTexture: 1
-  - name: Log
+  - name: Grass
     isSolid: 1
     renderNeighborFaces: 0
     transparency: 0
-    icon: {fileID: 448961105294916356, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 5
-    backFaceTexture: 5
-    topFaceTexture: 6
-    bottomFaceTexture: 6
-    leftFaceTexture: 5
-    rightFaceTexture: 5
-  - name: Plank
+    icon: {fileID: 5392753449730437660, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 1
+    frontFaceTexture: 3
+    backFaceTexture: 3
+    topFaceTexture: 8
+    bottomFaceTexture: 2
+    leftFaceTexture: 3
+    rightFaceTexture: 3
+  - name: CobbleStone
     isSolid: 1
     renderNeighborFaces: 0
     transparency: 0
-    icon: {fileID: -1501523072523359806, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 4
-    backFaceTexture: 4
-    topFaceTexture: 4
-    bottomFaceTexture: 4
-    leftFaceTexture: 4
-    rightFaceTexture: 4
-  - name: Brick
+    icon: {fileID: 5581362664916931183, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
+    frontFaceTexture: 9
+    backFaceTexture: 9
+    topFaceTexture: 9
+    bottomFaceTexture: 9
+    leftFaceTexture: 9
+    rightFaceTexture: 9
+  - name: Sand
     isSolid: 1
     renderNeighborFaces: 0
     transparency: 0
-    icon: {fileID: -4219558403781695398, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    icon: {fileID: -9138616440249935319, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
     frontFaceTexture: 11
     backFaceTexture: 11
     topFaceTexture: 11
     bottomFaceTexture: 11
     leftFaceTexture: 11
     rightFaceTexture: 11
+  - name: Dirt
+    isSolid: 1
+    renderNeighborFaces: 0
+    transparency: 0
+    icon: {fileID: -6943373833598557, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
+    frontFaceTexture: 2
+    backFaceTexture: 2
+    topFaceTexture: 2
+    bottomFaceTexture: 2
+    leftFaceTexture: 2
+    rightFaceTexture: 2
+  - name: Log
+    isSolid: 1
+    renderNeighborFaces: 0
+    transparency: 0
+    icon: {fileID: 448961105294916356, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
+    frontFaceTexture: 6
+    backFaceTexture: 6
+    topFaceTexture: 6
+    bottomFaceTexture: 6
+    leftFaceTexture: 6
+    rightFaceTexture: 6
+  - name: Plank
+    isSolid: 1
+    renderNeighborFaces: 0
+    transparency: 0
+    icon: {fileID: -1501523072523359806, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
+    frontFaceTexture: 5
+    backFaceTexture: 5
+    topFaceTexture: 5
+    bottomFaceTexture: 5
+    leftFaceTexture: 5
+    rightFaceTexture: 5
+  - name: Brick
+    isSolid: 1
+    renderNeighborFaces: 0
+    transparency: 0
+    icon: {fileID: -4219558403781695398, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
+    toBeColorized: 0
+    frontFaceTexture: 12
+    backFaceTexture: 12
+    topFaceTexture: 12
+    bottomFaceTexture: 12
+    leftFaceTexture: 12
+    rightFaceTexture: 12
   - name: Glass
     isSolid: 1
     renderNeighborFaces: 1
     transparency: 1
     icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 3
-    backFaceTexture: 3
-    topFaceTexture: 3
-    bottomFaceTexture: 3
-    leftFaceTexture: 3
-    rightFaceTexture: 3
+    toBeColorized: 0
+    frontFaceTexture: 4
+    backFaceTexture: 4
+    topFaceTexture: 4
+    bottomFaceTexture: 4
+    leftFaceTexture: 4
+    rightFaceTexture: 4
   - name: Leaves
     isSolid: 1
     renderNeighborFaces: 1
     transparency: 0.5
     icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 16
-    backFaceTexture: 16
-    topFaceTexture: 16
-    bottomFaceTexture: 16
-    leftFaceTexture: 16
-    rightFaceTexture: 16
+    toBeColorized: 1
+    frontFaceTexture: 17
+    backFaceTexture: 17
+    topFaceTexture: 17
+    bottomFaceTexture: 17
+    leftFaceTexture: 17
+    rightFaceTexture: 17
   - name: Cactus
     isSolid: 1
     renderNeighborFaces: 0
     transparency: 0
     icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 18
-    backFaceTexture: 18
-    topFaceTexture: 19
-    bottomFaceTexture: 19
-    leftFaceTexture: 18
-    rightFaceTexture: 18
-  - name: Cactus Top
-    isSolid: 1
-    renderNeighborFaces: 0
-    transparency: 0
-    icon: {fileID: -7538633921802359561, guid: 991c9980cef4e9a4f8a42693c18c9dea, type: 3}
-    frontFaceTexture: 18
-    backFaceTexture: 18
-    topFaceTexture: 17
-    bottomFaceTexture: 19
-    leftFaceTexture: 18
-    rightFaceTexture: 18
+    toBeColorized: 0
+    frontFaceTexture: 19
+    backFaceTexture: 19
+    topFaceTexture: 18
+    bottomFaceTexture: 20
+    leftFaceTexture: 19
+    rightFaceTexture: 19
   creativeInventoryWindow: {fileID: 36715079}
   cursor: {fileID: 1938755802}
   _inUi: 0
