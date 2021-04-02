@@ -22,6 +22,8 @@ public static class VoxelData {
     public static float maxLightLevel = 0.8f;
     public static float lightFalloff = 0.1f;
 
+    public static int seed;
+
     public static readonly Vector3[] voxelVerts = new Vector3[8]{
         new Vector3(0f,0f,0f),
         new Vector3(1f,0f,0f),
