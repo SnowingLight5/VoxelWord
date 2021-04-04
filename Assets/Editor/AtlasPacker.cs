@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using System.IO;
-public class AtlasPacker : EditorWindow
-{
+using UnityEditor;
+using UnityEngine;
+public class AtlasPacker : EditorWindow {
 
     int blockSize = 512; //block size in pixels.
     int atlasSizeInBlocks = 16;
@@ -14,15 +12,13 @@ public class AtlasPacker : EditorWindow
     List<Texture2D> sortedTextures = new List<Texture2D>();
     Texture2D atlas;
 
-    [MenuItem ("VoxelWorld/Atlas Packer")]
+    [MenuItem("VoxelWorld/Atlas Packer")]
 
-    public static void ShowWindow()
-    {
+    public static void ShowWindow() {
         EditorWindow.GetWindow(typeof(AtlasPacker));
     }
 
-    private void OnGUI()
-    {
+    private void OnGUI() {
         atlasSize = blockSize * atlasSizeInBlocks;
 
         GUILayout.Label("Voxel world texture atlas packer", EditorStyles.boldLabel);
@@ -30,30 +26,24 @@ public class AtlasPacker : EditorWindow
         blockSize = EditorGUILayout.IntField("Block size", blockSize);
         atlasSizeInBlocks = EditorGUILayout.IntField("Atlas size in blocks", atlasSizeInBlocks);
 
-        if(GUILayout.Button("Load Textures"))
-        {
+        if (GUILayout.Button("Load Textures")) {
             LoadTextures();
             PackAtlas();
             Debug.Log("Atlas Packer: Textures loaded");
         }
 
-        if (GUILayout.Button("Clear Textures"))
-        {
+        if (GUILayout.Button("Clear Textures")) {
             atlas = new Texture2D(atlasSize, atlasSize);
             Debug.Log("Atlas Packer: Textures cleared");
         }
 
-        if(GUILayout.Button("Save Atlas"))
-        {
+        if (GUILayout.Button("Save Atlas")) {
             byte[] bytes = atlas.EncodeToPNG();
 
-            try
-            {
+            try {
                 File.WriteAllBytes(Application.dataPath + "/Textures/PackedAtlas.png", bytes);
                 Debug.Log("Atlas Packer: Textures saved");
-            }
-            catch
-            {
+            } catch {
                 Debug.Log("Atlas Packer: Couldn't save atlas to file.");
             }
         }
@@ -62,41 +52,29 @@ public class AtlasPacker : EditorWindow
 
     }
 
-    void LoadTextures()
-    {
+    void LoadTextures() {
         sortedTextures.Clear();
         rawTextures = new Object[blockSize * atlasSizeInBlocks];
         rawTextures = Resources.LoadAll("AtlasPacker/textures", typeof(Texture2D));
 
         int index = 0;
 
-        foreach(Object texture in rawTextures)
-        {
+        foreach (Object texture in rawTextures) {
             Texture2D t = (Texture2D) texture;
-            if (t.width == blockSize && t.height == blockSize)
-            {
-                if (texture.name.EndsWith("_n"))
-                {
+            if (t.width == blockSize && t.height == blockSize) {
+                if (texture.name.EndsWith("_n")) {
                     Debug.Log("Ignoring n textures");
-                }
-                else if (texture.name.EndsWith("_s")) {
+                } else if (texture.name.EndsWith("_s")) {
                     Debug.Log("Ignoring s textures");
-                }
-                else if (texture.name.Contains("glass_pane"))
-                {
+                } else if (texture.name.Contains("glass_pane")) {
                     Debug.Log("Ignoring glass pane textures");
-                }
-                else if (texture.name.Contains("torch"))
-                {
+                } else if (texture.name.Contains("torch")) {
                     Debug.Log("Ignoring torch textures");
-                }
-                else
-                {
+                } else {
                     Debug.Log(texture.name);
                     sortedTextures.Add(t);
                 }
-            }else
-            {
+            } else {
                 Debug.Log("Asset Packer: " + texture.name + " incorrect size. Texture not loaded");
             }
 
@@ -106,15 +84,12 @@ public class AtlasPacker : EditorWindow
         Debug.Log("Atlas Packer: " + sortedTextures.Count);
     }
 
-    void PackAtlas()
-    {
+    void PackAtlas() {
         atlas = new Texture2D(atlasSize, atlasSize);
         Color[] pixels = new Color[atlasSize * atlasSize];
 
-        for(int x = 0; x < atlasSize; x++)
-        {
-            for (int y = 0; y < atlasSize; y++)
-            {
+        for (int x = 0; x < atlasSize; x++) {
+            for (int y = 0; y < atlasSize; y++) {
                 int currentBlockX = x / blockSize;
                 int currentBlockY = y / blockSize;
 
@@ -123,13 +98,10 @@ public class AtlasPacker : EditorWindow
                 int currentPixelX = x - (currentBlockX * blockSize);
                 int currentPixelY = y - (currentBlockY * blockSize);
 
-                if(index < sortedTextures.Count)
-                {
+                if (index < sortedTextures.Count) {
                     pixels[(atlasSize - y - 1) * atlasSize + x] = sortedTextures[index].GetPixel(x, blockSize - y - 1);
-                }
-                else
-                {
-                    pixels[(atlasSize - y - 1) * atlasSize + x] = new Color(0f, 0f, 0f, 0f);         
+                } else {
+                    pixels[(atlasSize - y - 1) * atlasSize + x] = new Color(0f, 0f, 0f, 0f);
                 }
             }
 

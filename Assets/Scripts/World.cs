@@ -1,16 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using System.Threading;
 using System.IO;
+using System.Threading;
+using UnityEngine;
 
-public class World : MonoBehaviour
-{
+public class World : MonoBehaviour {
 
     public Settings settings;
 
-
-    [Header("World generation values")]    
+    [Header("World generation values")]
     public BiomeAttribute[] biomes;
 
     [Range(0f, 1f)]
@@ -45,12 +42,14 @@ public class World : MonoBehaviour
     Thread chunkUpdateThread;
     public object chunkUpdateThreadLock = new object();
 
+    public Clouds clouds;
+
     public bool _inUi = false;
     public bool inUi {
-        get { return _inUi;}
-        set { 
+        get { return _inUi; }
+        set {
             _inUi = value;
-            if(_inUi){
+            if (_inUi) {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
                 creativeInventoryWindow.SetActive(true);
@@ -68,33 +67,29 @@ public class World : MonoBehaviour
 
         Debug.Log("Generating new world using seed " + VoxelData.seed);
 
-        /*string jsonExport = JsonUtility.ToJson(settings);
-        Debug.Log(jsonExport);
-
-        File.WriteAllText(Application.dataPath + "/settings.json", jsonExport);*/
-
         string jsonImport = File.ReadAllText(Application.dataPath + "/settings.json");
         settings = JsonUtility.FromJson<Settings>(jsonImport);
+
+        Debug.Log(settings.clouds);
 
         Random.InitState(VoxelData.seed);
 
         Shader.SetGlobalFloat("minGlobalLightLevel", VoxelData.minLightLevel);
         Shader.SetGlobalFloat("maxGlobalLightLevel", VoxelData.maxLightLevel);
 
-        if(settings.enableThreading){
+        if (settings.enableThreading) {
             chunkUpdateThread = new Thread(new ThreadStart(ThreadedUpdate));
             chunkUpdateThread.Start();
         }
 
         SetGlobalLightValue();
-        
-        spawnPosition = new Vector3((VoxelData.worldSizeInChunks * VoxelData.chunkWidth) / 2f, VoxelData.chunkHeight + 2f -50f, (VoxelData.worldSizeInChunks * VoxelData.chunkWidth) / 2f);
+
+        spawnPosition = new Vector3(VoxelData.worldCenter, VoxelData.chunkHeight + 2f - 50f, VoxelData.worldCenter);
         GenerateWorld();
         playerLastChunkCoord = GetChunkCoordFromVector3(player.position);
     }
 
-    public void SetGlobalLightValue()
-    {
+    public void SetGlobalLightValue() {
         Shader.SetGlobalFloat("globalLightLevel", globalLightLevel);
         Camera.main.backgroundColor = Color.Lerp(night, day, globalLightLevel);
     }
@@ -103,43 +98,39 @@ public class World : MonoBehaviour
 
         playerChunkCoord = GetChunkCoordFromVector3(player.position);
 
-        if(!playerChunkCoord.Equals(playerLastChunkCoord)){
+        if (!playerChunkCoord.Equals(playerLastChunkCoord)) {
             CheckViewDistance();
             playerLastChunkCoord = playerChunkCoord;
         }
 
-        
 
-        if(chunksToCreate.Count > 0)
-        {
+
+        if (chunksToCreate.Count > 0) {
             CreateChunk();
         }
 
-        
 
-        if(chunksToDraw.Count > 0){
-            if(chunksToDraw.Peek().isEditable){
+
+        if (chunksToDraw.Count > 0) {
+            if (chunksToDraw.Peek().isEditable) {
                 chunksToDraw.Dequeue().CreateMesh();
             }
         }
 
-        if (!settings.enableThreading)
-        {
-            if (!applyingModifications)
-            {
+        if (!settings.enableThreading) {
+            if (!applyingModifications) {
                 ApplyModifications();
             }
-            if(chunksToUpdate.Count > 0)
-            {
+            if (chunksToUpdate.Count > 0) {
                 UpdateChunks();
             }
         }
     }
 
-    void GenerateWorld(){
-        for(int x = (VoxelData.worldSizeInChunks / 2) - settings.viewDistance; x < (VoxelData.worldSizeInChunks / 2) + settings.viewDistance; x++){
-            for(int z = (VoxelData.worldSizeInChunks / 2) - settings.viewDistance; z < (VoxelData.worldSizeInChunks / 2) + settings.viewDistance; z++){
-                
+    void GenerateWorld() {
+        for (int x = (VoxelData.worldSizeInChunks / 2) - settings.viewDistance; x < (VoxelData.worldSizeInChunks / 2) + settings.viewDistance; x++) {
+            for (int z = (VoxelData.worldSizeInChunks / 2) - settings.viewDistance; z < (VoxelData.worldSizeInChunks / 2) + settings.viewDistance; z++) {
+
                 ChunkCoord newChunk = new ChunkCoord(x, z);
                 chunks[x, z] = new Chunk(newChunk, this);
                 chunksToCreate.Add(newChunk);
@@ -150,32 +141,26 @@ public class World : MonoBehaviour
         CheckViewDistance();
     }
 
-    void CreateChunk()
-    {
+    void CreateChunk() {
         ChunkCoord c = chunksToCreate[0];
         chunksToCreate.RemoveAt(0);
         chunks[c.x, c.z].Init();
     }
 
-    void UpdateChunks()
-    {
+    void UpdateChunks() {
         bool updated = false;
         int index = 0;
 
-        lock(chunkUpdateThreadLock){
-            while (!updated && index < chunksToUpdate.Count - 1)
-            {
-                if (chunksToUpdate[index].isEditable)
-                {
+        lock (chunkUpdateThreadLock) {
+            while (!updated && index < chunksToUpdate.Count - 1) {
+                if (chunksToUpdate[index].isEditable) {
                     chunksToUpdate[index].UpdateChunk();
-                    if (activeChunks.Contains(chunksToUpdate[index].coord)) { 
+                    if (activeChunks.Contains(chunksToUpdate[index].coord)) {
                         activeChunks.Add(chunksToUpdate[index].coord);
                     }
                     chunksToUpdate.RemoveAt(0);
                     updated = true;
-                }
-                else
-                {
+                } else {
                     index++;
                 }
             }
@@ -184,45 +169,39 @@ public class World : MonoBehaviour
 
     void ThreadedUpdate() {
         while (true) {
-            if(!applyingModifications)
-            {
+            if (!applyingModifications) {
                 ApplyModifications();
             }
-            if(chunksToUpdate.Count > 0)
-            {
+            if (chunksToUpdate.Count > 0) {
                 UpdateChunks();
             }
         }
     }
 
-    private void OnDisable(){
-        if (settings.enableThreading)
-        {
+    private void OnDisable() {
+        if (settings.enableThreading) {
             chunkUpdateThread.Abort();
         }
     }
 
-    void ApplyModifications()
-    {
+    void ApplyModifications() {
         applyingModifications = true;
 
-        while(modifications.Count > 0)
-        {
+        while (modifications.Count > 0) {
 
             Queue<VoxelMod> queue = modifications.Dequeue();
 
-            while(queue.Count > 0){
+            while (queue.Count > 0) {
 
                 VoxelMod v = queue.Dequeue();
 
-                if(v == null){
+                if (v == null) {
                     continue;
                 }
 
                 ChunkCoord c = GetChunkCoordFromVector3(v.position);
 
-                if (chunks[c.x, c.z] == null)
-                {
+                if (chunks[c.x, c.z] == null) {
                     chunks[c.x, c.z] = new Chunk(c, this);
                     chunksToCreate.Add(c);
                 }
@@ -234,16 +213,15 @@ public class World : MonoBehaviour
         applyingModifications = false;
     }
 
-    public ChunkCoord GetChunkCoordFromVector3(Vector3 pos){
+    public ChunkCoord GetChunkCoordFromVector3(Vector3 pos) {
 
         int x = Mathf.FloorToInt(pos.x / VoxelData.chunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.chunkWidth);
 
-        return new ChunkCoord(x,z);
+        return new ChunkCoord(x, z);
     }
 
-    public Chunk GetChunkFromVector3(Vector3 pos)
-    {
+    public Chunk GetChunkFromVector3(Vector3 pos) {
 
         int x = Mathf.FloorToInt(pos.x / VoxelData.chunkWidth);
         int z = Mathf.FloorToInt(pos.z / VoxelData.chunkWidth);
@@ -252,7 +230,10 @@ public class World : MonoBehaviour
     }
 
 
-    void CheckViewDistance(){
+    void CheckViewDistance() {
+
+        clouds.UpdateClouds();
+
         ChunkCoord coord = GetChunkCoordFromVector3(player.position);
         playerLastChunkCoord = playerChunkCoord;
 
@@ -266,13 +247,13 @@ public class World : MonoBehaviour
                 ChunkCoord thisChunkCoord = new ChunkCoord(x, z);
 
                 // If the current chunk is in the world...
-                if (IsChunkInWorld (thisChunkCoord)) {
+                if (IsChunkInWorld(thisChunkCoord)) {
 
                     // Check if it active, if not, activate it.
                     if (chunks[x, z] == null) {
                         chunks[x, z] = new Chunk(thisChunkCoord, this);
                         chunksToCreate.Add(thisChunkCoord);
-                    }  else if (!chunks[x, z].isActive) {
+                    } else if (!chunks[x, z].isActive) {
                         chunks[x, z].isActive = true;
                     }
                     activeChunks.Add(thisChunkCoord);
@@ -281,7 +262,7 @@ public class World : MonoBehaviour
                 // Check through previously active chunks to see if this chunk is there. If it is, remove it from the list.
                 for (int i = 0; i < previouslyActiveChunks.Count; i++) {
 
-                    if (previouslyActiveChunks[i].Equals(thisChunkCoord)){
+                    if (previouslyActiveChunks[i].Equals(thisChunkCoord)) {
                         previouslyActiveChunks.RemoveAt(i);
                     }
                 }
@@ -289,40 +270,37 @@ public class World : MonoBehaviour
         }
 
         // Any chunks left in the previousActiveChunks list are no longer in the player's view distance, so loop through and disable them.
-        foreach (ChunkCoord c in previouslyActiveChunks){
+        foreach (ChunkCoord c in previouslyActiveChunks) {
             chunks[c.x, c.z].isActive = false;
         }
     }
 
-    public bool CheckForVoxel(Vector3 pos){
+    public bool CheckForVoxel(Vector3 pos) {
 
         ChunkCoord chunkCoord = new ChunkCoord(pos);
 
-        if(!IsChunkInWorld(chunkCoord) || pos.y < 0 || pos.y > VoxelData.chunkHeight){
+        if (!IsChunkInWorld(chunkCoord) || pos.y < 0 || pos.y > VoxelData.chunkHeight) {
             return false;
         }
 
-        if(chunks[chunkCoord.x, chunkCoord.z] != null && chunks[chunkCoord.x, chunkCoord.z].isEditable){
+        if (chunks[chunkCoord.x, chunkCoord.z] != null && chunks[chunkCoord.x, chunkCoord.z].isEditable) {
             return blockTypes[chunks[chunkCoord.x, chunkCoord.z].GetVoxelFromGlobalVector3(pos).id].isSolid;
         }
 
         return blockTypes[GetVoxel(pos)].isSolid;
 
-        
+
     }
 
-    public VoxelState GetVoxelState(Vector3 pos)
-    {
+    public VoxelState GetVoxelState(Vector3 pos) {
 
         ChunkCoord chunkCoord = new ChunkCoord(pos);
 
-        if (!IsChunkInWorld(chunkCoord) || pos.y < 0 || pos.y > VoxelData.chunkHeight)
-        {
+        if (!IsChunkInWorld(chunkCoord) || pos.y < 0 || pos.y > VoxelData.chunkHeight) {
             return null;
         }
 
-        if (chunks[chunkCoord.x, chunkCoord.z] != null && chunks[chunkCoord.x, chunkCoord.z].isEditable)
-        {
+        if (chunks[chunkCoord.x, chunkCoord.z] != null && chunks[chunkCoord.x, chunkCoord.z].isEditable) {
             return chunks[chunkCoord.x, chunkCoord.z].GetVoxelFromGlobalVector3(pos);
         }
 
@@ -331,16 +309,16 @@ public class World : MonoBehaviour
 
     }
 
-    public byte GetVoxel(Vector3 position){
+    public byte GetVoxel(Vector3 position) {
 
         int yPos = Mathf.FloorToInt(position.y);
 
         // if outside of world -> return air
-        if(!IsVoxelInWorld(position)){
+        if (!IsVoxelInWorld(position)) {
             return 0;
         }
         // if bottom of world -> return bedrock
-        if(yPos == 0){
+        if (yPos == 0) {
             return 1;
         }
 
@@ -352,23 +330,20 @@ public class World : MonoBehaviour
         float strongestWeight = 0f;
         int strongestbiomeIndex = 0;
 
-        for(int i =0; i < biomes.Length; i++)
-        {
+        for (int i = 0; i < biomes.Length; i++) {
             float weight = Noise.Get2DPerlin(new Vector2(position.x, position.z), biomes[i].offset, biomes[i].scale);
 
-            if(weight > strongestWeight)
-            {
+            if (weight > strongestWeight) {
                 strongestWeight = weight;
                 strongestbiomeIndex = i;
             }
 
             float height = Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biomes[i].terrainScale) * biomes[i].terrainHeight * weight;
 
-            if(height > 0)
-            {
+            if (height > 0) {
                 sumOfHeigths += height;
                 count++;
-            }    
+            }
         }
 
         BiomeAttribute biome = biomes[strongestbiomeIndex];
@@ -379,11 +354,11 @@ public class World : MonoBehaviour
 
         byte voxelValue = 0;
 
-        if(yPos == terrainHeight){
+        if (yPos == terrainHeight) {
             voxelValue = biome.surfaceBlock;
-        } else if (yPos < terrainHeight && yPos > terrainHeight - 4){
+        } else if (yPos < terrainHeight && yPos > terrainHeight - 4) {
             voxelValue = biome.subSurfaceBlock;
-        } else if(yPos > terrainHeight){
+        } else if (yPos > terrainHeight) {
             return 0;
         } else {
             voxelValue = 2;
@@ -391,10 +366,10 @@ public class World : MonoBehaviour
 
         /* SECOND PASS*/
 
-        if(voxelValue == 2){
-            foreach(Lode lode in biome.lodes){
-                if (yPos > lode.minHeight && yPos < lode.maxHeight){
-                    if(Noise.Get3DPerlin(position, lode.noiseOffset, lode.scale, lode.threshold)){
+        if (voxelValue == 2) {
+            foreach (Lode lode in biome.lodes) {
+                if (yPos > lode.minHeight && yPos < lode.maxHeight) {
+                    if (Noise.Get3DPerlin(position, lode.noiseOffset, lode.scale, lode.threshold)) {
                         voxelValue = lode.blockId;
                     }
                 }
@@ -403,11 +378,9 @@ public class World : MonoBehaviour
 
         /* MAJOR FLORA PASS*/
 
-        if(yPos == terrainHeight && biome.placeMajorFlora)
-        {
-            if(Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.majorFloraScale) > biome.majorFloraThreshold)
-            {
-                if(Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.majorPlacementFloraScale) > biome.majorFloraPlacementThreshold){
+        if (yPos == terrainHeight && biome.placeMajorFlora) {
+            if (Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.majorFloraScale) > biome.majorFloraThreshold) {
+                if (Noise.Get2DPerlin(new Vector2(position.x, position.z), 0, biome.majorPlacementFloraScale) > biome.majorFloraPlacementThreshold) {
                     modifications.Enqueue(Structure.GenerateMajorFlora(biome.majorFloraIndex, position, biome.minMajorFloraHeight, biome.maxMajorFloraHeight));
                 }
             }
@@ -416,16 +389,14 @@ public class World : MonoBehaviour
         return voxelValue;
     }
 
-    public int GetBiomeIndex(Vector3 position){
+    public int GetBiomeIndex(Vector3 position) {
         float strongestWeight = 0f;
         int strongestbiomeIndex = 0;
 
-        for(int i =0; i < biomes.Length; i++)
-        {
+        for (int i = 0; i < biomes.Length; i++) {
             float weight = Noise.Get2DPerlin(new Vector2(position.x, position.z), biomes[i].offset, biomes[i].scale);
 
-            if(weight > strongestWeight)
-            {
+            if (weight > strongestWeight) {
                 strongestWeight = weight;
                 strongestbiomeIndex = i;
             }
@@ -434,16 +405,16 @@ public class World : MonoBehaviour
         return strongestbiomeIndex;
     }
 
-    bool IsChunkInWorld(ChunkCoord chunkCoord){
-        if(chunkCoord.x >= 0 && chunkCoord.x < VoxelData.worldSizeInChunks && chunkCoord.z >= 0 && chunkCoord.z < VoxelData.worldSizeInChunks){
+    bool IsChunkInWorld(ChunkCoord chunkCoord) {
+        if (chunkCoord.x >= 0 && chunkCoord.x < VoxelData.worldSizeInChunks && chunkCoord.z >= 0 && chunkCoord.z < VoxelData.worldSizeInChunks) {
             return true;
         } else {
             return false;
         }
     }
 
-    bool IsVoxelInWorld(Vector3 position){
-        if(position.x >= 0 && position.x < VoxelData.worldSizeInVoxels && position.y >= 0 && position.y < VoxelData.chunkHeight && position.z >= 0 && position.z < VoxelData.worldSizeInVoxels ){
+    bool IsVoxelInWorld(Vector3 position) {
+        if (position.x >= 0 && position.x < VoxelData.worldSizeInVoxels && position.y >= 0 && position.y < VoxelData.chunkHeight && position.z >= 0 && position.z < VoxelData.worldSizeInVoxels) {
             return true;
         } else {
             return false;
@@ -471,9 +442,9 @@ public class BlockType {
     public int leftFaceTexture;
     public int rightFaceTexture;
 
-    public int GetTextureId(int faceIndex){
+    public int GetTextureId(int faceIndex) {
 
-        switch(faceIndex){
+        switch (faceIndex) {
             case 0:
                 return frontFaceTexture;
             case 1:
@@ -496,8 +467,7 @@ public class BlockType {
 }
 
 [System.Serializable]
-public class Settings
-{
+public class Settings {
     [Header("Game Data")]
     public string version = "0.0.1";
 
@@ -506,6 +476,7 @@ public class Settings
     public int viewDistance = 8;
     public bool enableThreading = true;
     public bool enableAnimatedChunks = false;
+    public CloudStyle clouds = CloudStyle.Fancy;
     [Header("Controls")]
     [Range(0.1f, 10f)]
     public float mouseSensitivy = 1f;

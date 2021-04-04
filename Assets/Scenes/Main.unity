@@ -374,6 +374,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5a69f184ed7f45f890955eb3e986a5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &492649023
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 492649027}
+  - component: {fileID: 492649026}
+  m_Layer: 0
+  m_Name: Clouds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &492649026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492649023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c2c3b6c8b37d204188ebe81f335e692, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cloudHeight: 100
+  cloudDepth: 4
+  cloudPattern: {fileID: 2800000, guid: c551bd0dfc3b33c4a9ad7463b4d893d5, type: 3}
+  cloudMaterial: {fileID: 2100000, guid: 540e892b4d6368449b3d45f69d44a8c2, type: 2}
+  world: {fileID: 1612571305}
+--- !u!4 &492649027
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492649023}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &518374509
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,8 +1553,8 @@ MonoBehaviour:
     viewDistance: 5
     enableThreading: 1
     enableAnimatedChunks: 0
+    clouds: 1
     mouseSensitivy: 1
-    seed: 848368
   biomes:
   - {fileID: 11400000, guid: 2cb1b20d3522afb8bbba0fad435a8edf, type: 2}
   - {fileID: 11400000, guid: b8eac3684e6f71c438cd8a836ea57eb1, type: 2}
@@ -1677,6 +1725,7 @@ MonoBehaviour:
     rightFaceTexture: 19
   creativeInventoryWindow: {fileID: 36715079}
   cursor: {fileID: 1938755802}
+  clouds: {fileID: 492649026}
   _inUi: 0
 --- !u!4 &1612571306
 Transform:

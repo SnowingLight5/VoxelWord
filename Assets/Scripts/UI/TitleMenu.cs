@@ -1,14 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using System.IO;
 using TMPro;
-using System.IO;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
-public class TitleMenu : MonoBehaviour
-{
+public class TitleMenu : MonoBehaviour {
 
     public GameObject mainMenuObject;
     public GameObject settingsObject;
@@ -24,31 +21,32 @@ public class TitleMenu : MonoBehaviour
     public TextMeshProUGUI mouseText;
     public Toggle threadingToggle;
     public Toggle chunkAnimToggle;
+    public TMP_Dropdown clouds;
 
     Settings settings;
 
     private void Awake() {
-        if(!File.Exists(Application.dataPath + "/settings.json")){
+        if (!File.Exists(Application.dataPath + "/settings.json")) {
             Debug.Log("No settings file found, creating new one.");
 
             settings = new Settings();
             string jsonExport = JsonUtility.ToJson(settings);
             File.WriteAllText(Application.dataPath + "/settings.json", jsonExport);
-        } else{
+        } else {
             Debug.Log("Settings file found, loading.");
 
             string jsonImport = File.ReadAllText(Application.dataPath + "/settings.json");
             settings = JsonUtility.FromJson<Settings>(jsonImport);
-        }    
+        }
     }
 
-    public void StartGame(){
+    public void StartGame() {
 
         VoxelData.seed = Mathf.Abs(seedField.text.GetHashCode()) / VoxelData.worldSizeInChunks;
         SceneManager.LoadScene("Main", LoadSceneMode.Single);
     }
 
-    public void EnterSettings(){
+    public void EnterSettings() {
 
         viewDistSlider.value = settings.viewDistance;
         viewDistText.text = "View Distance: " + viewDistSlider.value;
@@ -56,17 +54,19 @@ public class TitleMenu : MonoBehaviour
         mouseText.text = "Mouse Sensitivity: " + mouseSlider.value.ToString("F1");
         threadingToggle.isOn = settings.enableThreading;
         chunkAnimToggle.isOn = settings.enableAnimatedChunks;
+        clouds.value = (int) settings.clouds;
 
         mainMenuObject.SetActive(false);
         settingsObject.SetActive(true);
     }
 
-    public void LeaveSettings(){
+    public void LeaveSettings() {
 
         settings.viewDistance = (int) viewDistSlider.value;
         settings.mouseSensitivy = mouseSlider.value;
         settings.enableThreading = threadingToggle.isOn;
         settings.enableAnimatedChunks = chunkAnimToggle.isOn;
+        settings.clouds = (CloudStyle) clouds.value;
 
         string jsonExport = JsonUtility.ToJson(settings);
         File.WriteAllText(Application.dataPath + "/settings.json", jsonExport);
@@ -75,15 +75,15 @@ public class TitleMenu : MonoBehaviour
         settingsObject.SetActive(false);
     }
 
-    public void QuitGame(){
+    public void QuitGame() {
         Application.Quit();
     }
 
-    public void UpdateViewDistSlider(){
+    public void UpdateViewDistSlider() {
         viewDistText.text = "View Distance: " + viewDistSlider.value;
     }
 
-    public void UpdateMouseSlider(){
+    public void UpdateMouseSlider() {
         mouseText.text = "Mouse Sensitivity: " + mouseSlider.value.ToString("F1");
     }
 }
